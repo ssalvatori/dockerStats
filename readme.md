@@ -6,15 +6,11 @@ Get statistics (memory and cpu_usage) from containers running on a box
 
 docker version > 1.5
 
+Upgrade pip
 > easy_install -U pip
 
-For ubuntu/debian boxes
-> sudo pip install docker 
-> sudo pip instlal argparse 
-
-For centos/rhe
-> pip install argparse
-> pip install docker-py
+Install requirements
+> pip install -r requirements.txt
 
 ## Usage
 > sudo ./docker_stats
