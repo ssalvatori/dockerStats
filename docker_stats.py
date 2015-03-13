@@ -21,8 +21,6 @@ class DockerStats():
 
 			for container in self.containers:
 
-				print container
-
 				#container_name = container["Names"][0].replace('/','')
 				container_id = str(container["Id"])
 				container_img = str(container["Image"])
