@@ -3,7 +3,7 @@
 import argparse
 import docker
 import json
-import logger
+import logging
 
 class DockerStats():
 
@@ -18,6 +18,8 @@ class DockerStats():
 			'''
 			
 			self.containers = self.conn.containers()
+			
+			logging.info("action=num_containers total=" + str(len(self.containers)))		
 
 			for container in self.containers:
 
@@ -28,9 +30,9 @@ class DockerStats():
 				stats = self.conn.stats(container_id)
 
 				for statStr in stats:
-					print self._readStat(statStr,container_id, container_img)
+					logging.info(self._readStat(statStr,container_id, container_img))
 					break
-
+			
 
 		def _readStat(self,stats,container_id, container_img):
 			'''
@@ -47,10 +49,9 @@ class DockerStats():
 				cpu_total_system=str(statsObj["cpu_stats"]["cpu_usage"]["total_usage"])
 			)
 
-			summaryStr = ""
+			summaryStr = "action=stats "
 			for key,value in summaryData.items():
 				summaryStr += " "+key+"="+value
-
 			return summaryStr
 
 def main():
@@ -62,6 +63,7 @@ def main():
 
 	args = argp.parse_args()
 
+	logging.basicConfig(level=logging.INFO, filename="/var/log/docker-stats.log", format='%(asctime)s %(message)s')
 	docker_stats = DockerStats(args.url)
 	docker_stats.stats()
 
