@@ -15,15 +15,19 @@ class DockerStats():
 			self.ramLimits = ramLimits
 			self.iodiskLimits = iodiskLimits
 			self.ionetLimits = ionetLimits
-			self.conn = docker.Client(base_url=self.url, timeout=20)
 			self.statusDict = {}
+			self.conn = docker.Client(base_url=self.url, timeout=20)
+			
+			try :
+				self.containers = self.conn.containers()
+			except :
+				print("WARNING: There is not containers available to monitor or host not reachable")
+				sys.exit(ContainerStatus.WARNING)
 	
 		def stats(self):
 			'''
 
 			'''
-			
-			self.containers = self.conn.containers()
 			
 			logging.info("action=num_containers total=" + str(len(self.containers)))		
 
