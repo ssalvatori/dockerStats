@@ -91,10 +91,10 @@ class DockerStats():
 				status = ContainerStatus.OK # OK
 			elif usage >= limits.warningLim and usage < limits.criticalLim:
 				status = ContainerStatus.WARNING # Warning
-				print("WARNING " + resource + ": The Container " + container_id + " has a percentage level of " + resource + ": " + str(usage))
+				print("WARNING " + resource + ": The Container " + container_id[:8] + " has % level of " + resource + ": " + str(usage)[:6])
 			elif usage >= limits.criticalLim:
 				status = ContainerStatus.CRITICAL # Critical
-				print("CRITICAL " + resource + ": The Container " + container_id + " has a percentage level of " + resource + ": " + str(usage))
+				print("CRITICAL " + resource + ": The Container " + container_id[:8] + " has % level of " + resource + ": " + str(usage)[:6])
 			return status
 				
 		      
