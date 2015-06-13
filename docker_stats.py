@@ -17,6 +17,7 @@ class DockerStats():
 			self.ionetLimits = ionetLimits
 			self.statusDict = {}
 			self.conn = docker.Client(base_url=self.url, timeout=20)
+			self.messages = []
 			
 			try :
 				self.containers = self.conn.containers()
@@ -59,6 +60,9 @@ class DockerStats():
 						else:
 							statusToReturn = status
 			
+			if len(self.messages) > 0:
+				print('\n'.join(self.messages))
+			
 			return statusToReturn
 			  
 			
@@ -91,10 +95,10 @@ class DockerStats():
 				status = ContainerStatus.OK # OK
 			elif usage >= limits.warningLim and usage < limits.criticalLim:
 				status = ContainerStatus.WARNING # Warning
-				print("WARNING " + resource + ": The Container " + container_id[:8] + " has % level of " + resource + ": " + str(usage)[:6])
+				self.messages.append("WARNING " + resource + ": The Container " + container_id[:8] + " has % level of " + resource + ": " + str(usage)[:6])
 			elif usage >= limits.criticalLim:
 				status = ContainerStatus.CRITICAL # Critical
-				print("CRITICAL " + resource + ": The Container " + container_id[:8] + " has % level of " + resource + ": " + str(usage)[:6])
+				self.messages.append("CRITICAL " + resource + ": The Container " + container_id[:8] + " has % level of " + resource + ": " + str(usage)[:6])
 			return status
 				
 		      
