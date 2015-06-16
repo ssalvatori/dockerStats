@@ -44,10 +44,10 @@ class DockerStats():
 				self._monitorContainerStats(container_id)
 				logging.info(summaryStr)
 				
-			sys.exit(self.returnWithStatus())
-			  
-		def returnWithStatus(self):
-			
+			sys.exit(self.responseExitCode())
+
+		def getStatusExit(self):
+
 			badStatusList =  [ContainerStatus.WARNING, ContainerStatus.CRITICAL]
 			
 			statusToReturn = ContainerStatus.OK
@@ -59,11 +59,17 @@ class DockerStats():
 							return ContainerStatus.CRITICAL
 						else:
 							statusToReturn = status
+
+			return statusToReturn
+			  
+		def responseExitCode(self):
 			
 			if len(self.messages) > 0:
 				print('\n'.join(self.messages))
-			
-			return statusToReturn
+			else:
+				print("OK: Everything is OK")
+
+			return self.getStatusExit
 			  
 			
 		def _monitorContainerStats(self, container_id):
