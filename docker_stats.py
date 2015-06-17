@@ -65,11 +65,11 @@ class DockerStats():
 		def responseExitCode(self):
 			
 			if len(self.messages) > 0:
-				print('\n'.join(self.messages))
+				print('::'.join(self.messages))
 			else:
 				print("OK: Everything is OK")
 
-			return self.getStatusExit
+			return self.getStatusExit()
 			  
 			
 		def _monitorContainerStats(self, container_id):
