@@ -18,6 +18,7 @@ class DockerStats():
         self.statusDict = {}
         self.conn = docker.Client(base_url=self.url, timeout=20)
         self.messages = []
+        self.hostname = socket.gethostname()
         
         try :
             self.containers = self.conn.containers()
@@ -27,7 +28,6 @@ class DockerStats():
 	
     def stats(self):
         logging.info("action=num_containers total=" + str(len(self.containers)))
-        hostname = socket.gethostname()
 
         for container in self.containers:
             container_id = str(container["Id"])
@@ -37,7 +37,7 @@ class DockerStats():
 
             stats = self.conn.stats(container_id)
             curStat = stats.next()
-            summaryStr = self._readStat(curStat,container_id, container_img, docker_image_tags, hostname)
+            summaryStr = self._readStat(curStat,container_id, container_img, docker_image_tags)
             self._monitorContainerStats(container_id)
             logging.info(summaryStr)
                 
@@ -106,14 +106,14 @@ class DockerStats():
     def _getPercentage(self, fraction, whole):
         return (float(fraction)/float(whole))*100
 
-    def _readStat(self,stats,container_id, container_img, docker_img_tags, server_hostname):
+    def _readStat(self,stats,container_id, container_img, docker_img_tags):
         statsObj = json.loads(stats)
 
         self.summaryData = dict(
             container_id=container_id,
             container_img=container_img,
             docker_image_tags=docker_img_tags,
-            hostname=server_hostname,
+            hostname=self.hostname,
             memory_usage=str(statsObj["memory_stats"]['usage']),
             memory_limit=str(statsObj["memory_stats"]['limit']),
             cpu_usage=str(statsObj["cpu_stats"]["cpu_usage"]["total_usage"]),
