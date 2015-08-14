@@ -4,6 +4,7 @@ import argparse
 import docker
 import json
 import logging
+import socket
 import sys
 
 class DockerStats():
@@ -17,6 +18,7 @@ class DockerStats():
         self.statusDict = {}
         self.conn = docker.Client(base_url=self.url, timeout=20)
         self.messages = []
+        self.hostname = socket.gethostname()
         
         try :
             self.containers = self.conn.containers()
@@ -111,6 +113,7 @@ class DockerStats():
             container_id=container_id,
             container_img=container_img,
             docker_image_tags=docker_img_tags,
+            hostname=self.hostname,
             memory_usage=str(statsObj["memory_stats"]['usage']),
             memory_limit=str(statsObj["memory_stats"]['limit']),
             cpu_usage=str(statsObj["cpu_stats"]["cpu_usage"]["total_usage"]),
