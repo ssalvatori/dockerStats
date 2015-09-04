@@ -31,8 +31,8 @@ class DockerStats():
 
         for container in self.containers:
             container_id = str(container["Id"])
-            container_img = str(container["Image"])
-            docker_image = self.conn.images(container_img, False, False)
+            container_img = str(container["Image"]).split(":")[0]
+            docker_image = self.conn.images(container_img)
             docker_image_tags = ";".join(docker_image[0]["RepoTags"])
 
             stats = self.conn.stats(container_id)
