@@ -19,7 +19,7 @@ class DockerStats():
         self.conn = docker.Client(base_url=self.url, timeout=20)
         self.messages = []
         self.hostname = socket.gethostname()
-        
+
         try :
             self.containers = self.conn.containers()
         except :
@@ -31,8 +31,8 @@ class DockerStats():
 
         for container in self.containers:
             container_id = str(container["Id"])
-            container_img = str(container["Image"])
-            docker_image = self.conn.images(container_img, False, False)
+            container_img = str(container["Image"]).split(":")[0]
+            docker_image = self.conn.images(container_img)
             docker_image_tags = ";".join(docker_image[0]["RepoTags"])
 
             stats = self.conn.stats(container_id)
@@ -114,21 +114,21 @@ class DockerStats():
             container_img=container_img,
             docker_image_tags=docker_img_tags,
             hostname=self.hostname,
-            memory_usage=str(statsObj["memory_stats"]['usage']),
-            memory_limit=str(statsObj["memory_stats"]['limit']),
-            cpu_usage=str(statsObj["cpu_stats"]["cpu_usage"]["total_usage"]),
-            cpu_total_system=str(statsObj["cpu_stats"]["system_cpu_usage"]),
-            network_rx_bytes=str(statsObj["network"]["rx_bytes"]),
-            network_tx_bytes=str(statsObj["network"]["tx_bytes"]),
-            network_rx_dropped=str(statsObj["network"]["rx_dropped"]),
-            network_tx_dropped=str(statsObj["network"]["tx_dropped"]),
-            network_rx_errors=str(statsObj["network"]["rx_errors"]),
-            network_tx_errors=str(statsObj["network"]["tx_errors"]),
-            network_rx_packet=str(statsObj["network"]["rx_packets"]),
-            network_tx_packet=str(statsObj["network"]["tx_packets"]),
-            blkio_io_service_bytes=str(statsObj["blkio_stats"]["io_service_bytes_recursive"]),
-            blkio_io_serviced=str(statsObj["blkio_stats"]["io_serviced_recursive"]),
-            blkio_io_queue=str(statsObj["blkio_stats"]["io_queue_recursive"])
+            memory_usage=json.dumps(statsObj["memory_stats"]['usage']),
+            memory_limit=json.dumps(statsObj["memory_stats"]['limit']),
+            cpu_usage=json.dumps(statsObj["cpu_stats"]["cpu_usage"]["total_usage"]),
+            cpu_total_system=json.dumps(statsObj["cpu_stats"]["system_cpu_usage"]),
+            network_rx_bytes=json.dumps(statsObj["network"]["rx_bytes"]),
+            network_tx_bytes=json.dumps(statsObj["network"]["tx_bytes"]),
+            network_rx_dropped=json.dumps(statsObj["network"]["rx_dropped"]),
+            network_tx_dropped=json.dumps(statsObj["network"]["tx_dropped"]),
+            network_rx_errors=json.dumps(statsObj["network"]["rx_errors"]),
+            network_tx_errors=json.dumps(statsObj["network"]["tx_errors"]),
+            network_rx_packet=json.dumps(statsObj["network"]["rx_packets"]),
+            network_tx_packet=json.dumps(statsObj["network"]["tx_packets"]),
+            blkio_io_service_bytes=json.dumps(statsObj["blkio_stats"]["io_service_bytes_recursive"]),
+            blkio_io_serviced=json.dumps(statsObj["blkio_stats"]["io_serviced_recursive"]),
+            blkio_io_queue=json.dumps(statsObj["blkio_stats"]["io_queue_recursive"])
         )
 
         summaryStr = "action=stats "
