@@ -31,13 +31,17 @@ class DockerStats():
 
         for container in self.containers:
             container_id = str(container["Id"])
-            container_img = str(container["Image"]).split(":")[0]
-            docker_image = self.conn.images(container_img)
-            docker_image_tags = ";".join(docker_image[0]["RepoTags"])
+            container_img = str(container["Image"])
+            container_name = str(container["Names"])
+            docker_image = self.conn.images(container_img.split(':')[0])
+            docker_image_tags = ""
+            if isinstance(docker_image, list) :
+                if "RepoTags" in docker_image[0] :
+                    docker_image_tags = ";".join(docker_image[0]["RepoTags"])
 
             stats = self.conn.stats(container_id)
             curStat = stats.next()
-            summaryStr = self._readStat(curStat,container_id, container_img, docker_image_tags)
+            summaryStr = self._readStat(curStat,container_id, container_img, docker_image_tags, container_name)
             self._monitorContainerStats(container_id)
             logging.info(summaryStr)
                 
@@ -106,12 +110,13 @@ class DockerStats():
     def _getPercentage(self, fraction, whole):
         return (float(fraction)/float(whole))*100
 
-    def _readStat(self,stats,container_id, container_img, docker_img_tags):
+    def _readStat(self,stats,container_id, container_img, docker_img_tags, container_name):
         statsObj = json.loads(stats)
 
         self.summaryData = dict(
             container_id=container_id,
             container_img=container_img,
+            container_name=container_name,
             docker_image_tags=docker_img_tags,
             hostname=self.hostname,
             memory_usage=json.dumps(statsObj["memory_stats"]['usage']),
