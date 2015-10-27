@@ -32,7 +32,7 @@ class DockerStats():
         for container in self.containers:
             container_id = str(container["Id"])
             container_img = str(container["Image"])
-            container_name = str(container["Names"])
+            container_name = container["Names"][0].split('/')[1]
             docker_image = self.conn.images(container_img.split(':')[0])
             docker_image_tags = ""
             if isinstance(docker_image, list) :
